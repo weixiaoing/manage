@@ -1,19 +1,25 @@
 import axios from 'axios'
 import { showMessage } from './status' // 引入状态码文件
+import { useUserStore } from '@/stores/user'
+import { ElMessage } from 'element-plus'
+import router from '@/router'
 
 // 设置接口超时时间
-axios.defaults.timeout = 60000
+axios.defaults.timeout = 5000
 
-axios.defaults.baseURL = import.meta.env.VITE_API_DOMAIN
+axios.defaults.baseURL = '/api'
 
 //http request 拦截器
 axios.interceptors.request.use(
   (config) => {
     // 配置请求头
     config.headers = {
-      //'Content-Type':'application/x-www-form-urlencoded',   // 传参方式表单
-      'Content-Type': 'application/json;charset=UTF-8', // 传参方式json
-      token: '80c483d59ca86ad0393cf8a98416e2a1' // 这里自定义配置，这里传的是token
+      'Content-Type': 'application/json;charset=UTF-8' // 传参方式json
+    }
+    const userStore = useUserStore()
+    const token = userStore.token
+    if (token) {
+      config.headers.token = 'Bearer ' + token
     }
     return config
   },
@@ -25,7 +31,11 @@ axios.interceptors.request.use(
 //http response 拦截器
 axios.interceptors.response.use(
   (response) => {
-    return response
+    if (response.data.code == 401) {
+      ElMessage.error('登录过期，请重新登录')
+      router.push('/login')
+    }
+    return response.data
   },
   (error) => {
     const { response } = error
@@ -34,7 +44,7 @@ axios.interceptors.response.use(
       showMessage(response.status) // 传入响应码，匹配响应码对应信息
       return Promise.reject(response.data)
     } else {
-      window.onmessage.sucess('yes')
+      ElMessage.error('请求超时!请检查网络或联系管理员')
     }
   }
 )
@@ -52,6 +62,12 @@ export function request(url = '', params = {}, type = 'POST') {
     } else if (type.toUpperCase() === 'POST') {
       promise = axios({
         method: 'POST',
+        url,
+        data: params
+      })
+    } else {
+      promise = axios({
+        method: 'DELETE',
         url,
         data: params
       })

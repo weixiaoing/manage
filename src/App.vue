@@ -1,11 +1,15 @@
 <script setup>
-import VueContent from './views/VueContent.vue'
+import ContentView from './views/ContentView.vue'
 </script>
 
 <template>
-  <n-message-provider>
-    <VueContent></VueContent>
-  </n-message-provider>
+  <ContentView />
 </template>
 
-<style scoped></style>
+<style scoped>
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+</style>

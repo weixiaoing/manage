@@ -1,23 +1,57 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { useUserStore } from '@/stores/user'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      redirect: '/key',
+      children: [
+        {
+          path: '/key',
+          name: 'key',
+          component: () => import('../views/KeyView.vue')
+        },
+        {
+          path: '/notice',
+          name: 'notice',
+          component: () => import('../views/NoticeView.vue')
+        },
+        {
+          path: '/newnotice',
+          name: 'newnotice',
+          component: () => import('../views/NewNotice.vue')
+        }
+      ]
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue')
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  // 判断该路由是否需要进行鉴权
+  // 获取token
+  if (to.name != 'login') {
+    const userStore = useUserStore()
+    const Admin = userStore.isAdmin
+    if (!Admin) {
+      // token不存在，则跳转到登录页
+      next('/login')
+    } else {
+      // token存在，则进行下一步路由
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

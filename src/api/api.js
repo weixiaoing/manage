@@ -10,27 +10,40 @@ export class UserService {
    * @param {string} username - 用户名
    * @return {HttpResponse} result
    */
-  static async login1(params) {
+  static async login(params) {
     // 接口一
-    return request('/login', params, 'post')
+    return request('/user/login', params, 'post')
   }
-  static async login2(params) {
-    // 接口二
-    return request('/login', params, 'post')
-  }
-  static async login3(params) {
-    // 接口三
-    return request('/login', params, 'post')
+  static async getInfo(params) {
+    return request('/user/info', params, 'get')
   }
 }
 
-export class landRelevant {
-  // 模块二
-  /**
-   * @description 获取地列表
-   * @return {HttpResponse} result
-   */
-  static async landList(params) {
-    return request('/land_list_info', params, 'get')
+export class KeyService {
+  static async getKeys(params) {
+    return request('/keyword/list', params, 'post')
+  }
+  static async audit(params) {
+    return request('/keyword/audit', params, 'post')
+  }
+  static async logOut() {
+    return request('/user/logout', {}, 'post')
+  }
+}
+
+export class NoticeService {
+  static async noticeCreate(params) {
+    return request('/notice/publish', params, 'post')
+  }
+
+  static async noticeUpdate(params) {
+    return request('/notice/update', params, 'post')
+  }
+
+  static async noticeDelete({ id }) {
+    return request(`/notice/delete/${id}`, {}, 'delete')
+  }
+  static async noticeGet() {
+    return request('/notice/list', {}, 'get')
   }
 }
