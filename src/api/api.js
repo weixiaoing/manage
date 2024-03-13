@@ -17,6 +17,9 @@ export class UserService {
   static async getInfo(params) {
     return request('/user/info', params, 'get')
   }
+  static async logout() {
+    return request('/user/login', {}, 'get')
+  }
 }
 
 export class KeyService {
