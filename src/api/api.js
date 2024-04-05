@@ -24,7 +24,10 @@ export class UserService {
 
 export class KeyService {
   static async getKeys(params) {
-    return request('/keyword/list', params, 'post')
+    return request('/keyword/admin/list', params, 'post')
+  }
+  static async getDetail(id) {
+    return request(`/keyword/${id}`, {}, 'get')
   }
   static async audit(params) {
     return request('/keyword/audit', params, 'post')

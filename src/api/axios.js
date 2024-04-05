@@ -7,7 +7,7 @@ import router from '@/router'
 // 设置接口超时时间
 axios.defaults.timeout = 5000
 
-axios.defaults.baseURL = '/api'
+axios.defaults.baseURL = 'http://lackofcsy.cn:9000'
 
 //http request 拦截器
 axios.interceptors.request.use(
