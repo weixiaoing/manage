@@ -3,16 +3,23 @@ import { UserService } from '@/api/api'
 import router from '@/router'
 import { useUserStore } from '@/stores/user'
 import { ref } from 'vue'
+// 获取用户变量仓库
 let userStore = useUserStore()
 let username = ref('')
 let password = ref('')
+// 提交表单
 const submit = async () => {
+  // 发送登录请求
   const res = await UserService.login({ email: username.value, password: password.value })
   if (res.code === 200) {
     userStore.token = res.data.token
+    // 账号密码正确再获取用户信息
     const info = await UserService.getInfo()
+    // 是管理员
     if (info.code === 200 && info.data.role == 'admin') {
+      // 设置全局用户变量，管理员变量为真
       userStore.isAdmin = true
+      // 跳转到关键词页面
       router.push({ name: 'key' })
       ElMessage({
         message: '登录成功',

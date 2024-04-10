@@ -1,7 +1,9 @@
 <script setup>
 import { NoticeService } from '@/api/api'
 import { onMounted, ref } from 'vue'
+// 定义公告列表
 let noticeList = ref([])
+// 获取公告列表
 const getNotice = async () => {
   noticeList.value = (await NoticeService.noticeGet()).data.map((item) => {
     return {
@@ -11,6 +13,7 @@ const getNotice = async () => {
     }
   })
 }
+// 删除公告
 const deleteNotice = async (row) => {
   const res = await NoticeService.noticeDelete({ id: row.id })
   if (res.code == 200) {
@@ -22,6 +25,7 @@ const deleteNotice = async (row) => {
   }
 }
 onMounted(() => {
+  // 初始化，获取公告列表
   getNotice()
 })
 </script>

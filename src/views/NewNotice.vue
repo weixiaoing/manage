@@ -1,31 +1,16 @@
-<template>
-  <div class="container">
-    <!-- 引入了 QuillEditor 组件，通过 :options 属性传递编辑器的选项参数，通过 v-model:content 实现双向绑定编辑器中的内容content 变量 -->
-    <!-- <QuillEditor style="height: 50%" v-model="content" :options="editorOptions" /> -->
-    <div class="title">
-      <span>公告标题:</span><el-input v-model="title" spaceholder="请输入公告标题"></el-input>
-    </div>
-    <div class="content">
-      <quill-editor
-        style="min-height: 70vh"
-        v-model:content="content"
-        contentType="html"
-        placeholder="请输入公告内容"
-        :options="editorOptions"
-      ></quill-editor>
-    </div>
-    <el-button type="primary" @click="addNotice">发布</el-button>
-  </div>
-</template>
-
 <script setup>
 // 引入了 Quill 编辑器，以及 QuillEditor 组件，并引入相应的 CSS 样式
 import { QuillEditor } from '@vueup/vue-quill'
 import { ref, reactive } from 'vue'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import { NoticeService } from '@/api/api'
+//定义内容
+let content = ref('')
+// 公告标题
 let title = ref('')
+// 添加公告功能
 const addNotice = async () => {
+  // 如果标题为空，内容为空
   if (title.value == '' || content.value == '') {
     ElMessage({
       message: '标题和内容不能为空',
@@ -33,6 +18,7 @@ const addNotice = async () => {
     })
     return
   }
+  // 发送添加公告请求
   const res = await NoticeService.noticeCreate({
     title: title.value,
     content: content.value
@@ -42,11 +28,12 @@ const addNotice = async () => {
       message: '发布成功',
       type: 'success'
     })
+    // 请求成功后，设置内容为空
     content.value = ''
     title.value = ''
   }
 }
-let content = ref('') //定义content
+// 编辑器配置
 const editorOptions = reactive({
   modules: {
     toolbar: [
@@ -68,6 +55,26 @@ const editorOptions = reactive({
   }
 })
 </script>
+
+<template>
+  <div class="container">
+    <!-- 引入了 QuillEditor 组件，通过 :options 属性传递编辑器的选项参数，通过 v-model:content 实现双向绑定编辑器中的内容content 变量 -->
+    <div class="title">
+      <span>公告标题:</span><el-input v-model="title" spaceholder="请输入公告标题"></el-input>
+    </div>
+    <div class="content">
+      <!-- 使用编辑器组件 -->
+      <quill-editor
+        style="min-height: 70vh"
+        v-model:content="content"
+        contentType="html"
+        placeholder="请输入公告内容"
+        :options="editorOptions"
+      ></quill-editor>
+    </div>
+    <el-button type="primary" @click="addNotice">发布</el-button>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .title {

@@ -2,15 +2,17 @@ import { createRouter } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { useUserStore } from '@/stores/user'
 import { createWebHashHistory } from 'vue-router'
-
+// 路由文件
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     {
+      // 主路由
       path: '/',
       name: 'home',
       component: HomeView,
       redirect: '/key',
+      // 嵌套的子路由
       children: [
         {
           path: '/key',
@@ -29,6 +31,7 @@ const router = createRouter({
         }
       ]
     },
+    // 登录页面
     {
       path: '/login',
       name: 'login',
@@ -38,19 +41,21 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  // 判断该路由是否需要进行鉴权
-  // 获取token
+  // 判断是不是到登录页面
   if (to.name != 'login') {
+    // 获取token
     const userStore = useUserStore()
     const Admin = userStore.isAdmin
     if (!Admin) {
       // token不存在，则跳转到登录页
       next('/login')
     } else {
-      // token存在，则进行下一步路由
+      // token存在，则跳转到响应路由
       next()
     }
-  } else {
+  }
+  // 是登录页面就直接跳转到登录
+  else {
     next()
   }
 })
